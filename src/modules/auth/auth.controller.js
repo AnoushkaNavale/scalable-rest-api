@@ -1,14 +1,9 @@
 const prisma = require('../../config/prisma');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { validationResult } = require('express-validator');
 
 exports.register = async (req, res, next) => {
   try {
-    const errors = validationResult(req);
-    if (!errors.isEmpty())
-      return res.status(400).json({ errors: errors.array() });
-
     const { name, email, password } = req.body;
 
     const existing = await prisma.user.findUnique({ where: { email } });
@@ -21,7 +16,15 @@ exports.register = async (req, res, next) => {
       data: { name, email, password: hashed }
     });
 
-    res.status(201).json({ message: 'User registered successfully' });
+    res.status(201).json({
+      message: 'User registered successfully',
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      }
+    });
 
   } catch (err) {
     next(err);
@@ -43,10 +46,18 @@ exports.login = async (req, res, next) => {
     const token = jwt.sign(
       { id: user.id, role: user.role },
       process.env.JWT_SECRET,
-      { expiresIn: '1h' }
+      { expiresIn: '1h', algorithm: 'HS256' }
     );
 
-    res.json({ token });
+    res.json({
+      token,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      }
+    });
 
   } catch (err) {
     next(err);

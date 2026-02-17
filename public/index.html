@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Scalable API Dashboard</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="container">
+      <h1>Scalable API Demo</h1>
+      <p class="subtitle">Register, log in, and manage protected tasks.</p>
+
+      <section id="message" class="message hidden" aria-live="polite"></section>
+
+      <section id="authSection" class="card auth-grid">
+        <div>
+          <h2>Register</h2>
+          <form id="registerForm" class="form">
+            <label>
+              Name
+              <input type="text" name="name" required minlength="2" maxlength="100" />
+            </label>
+            <label>
+              Email
+              <input type="email" name="email" required />
+            </label>
+            <label>
+              Password
+              <input type="password" name="password" required minlength="8" maxlength="64" />
+            </label>
+            <button type="submit">Register</button>
+          </form>
+        </div>
+
+        <div>
+          <h2>Login</h2>
+          <form id="loginForm" class="form">
+            <label>
+              Email
+              <input type="email" name="email" required />
+            </label>
+            <label>
+              Password
+              <input type="password" name="password" required />
+            </label>
+            <button type="submit">Login</button>
+          </form>
+        </div>
+      </section>
+
+      <section id="dashboardSection" class="card hidden">
+        <div class="dashboard-header">
+          <div>
+            <h2>Dashboard</h2>
+            <p id="userMeta"></p>
+          </div>
+          <button id="logoutBtn" class="secondary">Logout</button>
+        </div>
+
+        <form id="taskForm" class="form inline">
+          <label>
+            Title
+            <input type="text" name="title" required maxlength="120" />
+          </label>
+          <label>
+            Description
+            <input type="text" name="description" maxlength="500" />
+          </label>
+          <label>
+            Status
+            <select name="status">
+              <option value="PENDING">PENDING</option>
+              <option value="COMPLETED">COMPLETED</option>
+            </select>
+          </label>
+          <button type="submit">Create Task</button>
+        </form>
+
+        <div class="toolbar">
+          <button id="loadMineBtn" class="secondary">Load My Tasks</button>
+          <button id="loadAllBtn" class="secondary">Load All Tasks (Admin)</button>
+        </div>
+
+        <ul id="taskList" class="task-list"></ul>
+      </section>
+    </main>
+
+    <script src="./app.js"></script>
+  </body>
+</html>
