@@ -1,0 +1,73 @@
+# .github/workflows/ci.yml
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  lint-and-test:
+    name: Lint & Test
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER:     postgres
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB:       test_db
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+      redis:
+        image: redis:7
+        ports: ['6379:6379']
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Generate Prisma client
+        run: npx prisma generate
+
+      - name: Run database migrations
+        env:
+          DATABASE_URL: postgresql://postgres:postgres@localhost:5432/test_db?schema=public
+        run: npx prisma migrate deploy
+
+      - name: Run tests
+        env:
+          NODE_ENV:       test
+          PORT:           5000
+          DATABASE_URL:   postgresql://postgres:postgres@localhost:5432/test_db?schema=public
+          JWT_SECRET:     test-secret-minimum-32-characters-long-here
+          JWT_EXPIRES_IN: 1h
+          REDIS_URL:      redis://localhost:6379
+          CLIENT_URL:     http://localhost:5000
+          MAIL_HOST:      smtp.mailtrap.io
+          MAIL_PORT:      2525
+          MAIL_USER:      test
+          MAIL_PASS:      test
+          MAIL_FROM:      test@example.com
+        run: npm test
