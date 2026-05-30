@@ -2,6 +2,16 @@
 
 A production-ready Node.js REST API built on top of the original `scalable-rest-api` project, upgraded with industry-standard tooling. **All tools are 100% free and open-source.**
 
+## Screenshots
+
+### Swagger API Documentation
+
+![Swagger API Documentation](docs/screenshots/swagger-docs.png)
+
+### Frontend Demo
+
+![Frontend Demo](docs/screenshots/frontend-dashboard.png)
+
 ## What Was Added (vs Original)
 
 | Feature | Original | Upgraded |
